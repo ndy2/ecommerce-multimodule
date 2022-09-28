@@ -7,6 +7,7 @@ plugins {
 
 
 dependencies {
+    implementation(project(":util"))
 
     implementation("org.mariadb.jdbc:mariadb-java-client")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
