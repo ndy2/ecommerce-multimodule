@@ -7,6 +7,7 @@ import com.example.userservice.service.dto.CreateUserRequest
 import com.example.userservice.service.dto.CreateUserResponse
 import com.example.userservice.service.dto.GetDetailedUserResponse
 import com.example.userservice.service.dto.GetUsersResponse
+import mu.KotlinLogging
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker
 import org.springframework.core.env.Environment
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -25,6 +26,8 @@ class UserService(
     private val circuitBreaker: CircuitBreaker,
 ) {
 
+    private val log = KotlinLogging.logger {}
+    
     @Transactional
     fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
         val user = UserEntity(
@@ -50,10 +53,12 @@ class UserService(
         val user = userRepository.findByUserId(userId)
             ?: throw IllegalArgumentException("no such user id : $userId")
 
+        log.info("before call orders-service")
         val orderListResponse = circuitBreaker.run(
             /* toRun = */ { orderServiceClient.getOrders(userId) },
             /* fallback = */ { throwable -> emptyList() }
         )
+        log.info("after called orders-service")
 
         return GetDetailedUserResponse(
             user.name,

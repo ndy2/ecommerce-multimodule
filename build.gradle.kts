@@ -46,6 +46,8 @@ subprojects {
         //logging
         implementation("io.github.microutils:kotlin-logging-jvm:2.0.10")
         implementation("org.slf4j:slf4j-api:1.7.30")
+        implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+        implementation("org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE")
     }
 
     tasks.test {
