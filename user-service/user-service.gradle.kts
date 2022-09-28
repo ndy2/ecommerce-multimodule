@@ -20,4 +20,5 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 }

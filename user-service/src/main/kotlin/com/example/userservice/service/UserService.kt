@@ -7,11 +7,13 @@ import com.example.userservice.service.dto.CreateUserRequest
 import com.example.userservice.service.dto.CreateUserResponse
 import com.example.userservice.service.dto.GetDetailedUserResponse
 import com.example.userservice.service.dto.GetUsersResponse
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker
 import org.springframework.core.env.Environment
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
+
 
 @Service
 class UserService(
@@ -20,6 +22,7 @@ class UserService(
     private val restTemplate: RestTemplate,
     private val orderServiceClient: OrderServiceClient,
     private val env: Environment,
+    private val circuitBreaker: CircuitBreaker,
 ) {
 
     @Transactional
@@ -47,15 +50,10 @@ class UserService(
         val user = userRepository.findByUserId(userId)
             ?: throw IllegalArgumentException("no such user id : $userId")
 
-        /*val orderUrl = String.format(env.getProperty("order-service.url")!!, userId)
-        val orderListResponse: ResponseEntity<List<GetDetailedUserResponse.OrderResponse>> = restTemplate.exchange(
-            orderUrl,
-            HttpMethod.GET,
-            null,
-            object : ParameterizedTypeReference<List<GetDetailedUserResponse.OrderResponse>>() {} // 익명 클래스
-        )*/
-
-        val orderListResponse = orderServiceClient.getOrders(userId)
+        val orderListResponse = circuitBreaker.run(
+            /* toRun = */ { orderServiceClient.getOrders(userId) },
+            /* fallback = */ { throwable -> emptyList() }
+        )
 
         return GetDetailedUserResponse(
             user.name,
