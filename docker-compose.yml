@@ -1,0 +1,156 @@
+version: "3.8"
+
+networks:
+  my-network:
+    #    external: true
+    #    docker network create --gateway 172.18.0.1 --subnet 172.18.0.0/16 ecommerce-network
+    name: ecommerce-network
+
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    ports:
+      - "15671:15671"
+      - "15672:15672"
+      - "5671:5671"
+      - "5672:5672"
+      - "4369:4369"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      my-network:
+
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.100
+  kafka:
+    # build: .
+    container_name: kafka
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
+      KAFKA_CREATE_TOPICS: "test:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.101
+
+  config-server:
+    container_name: config-server
+    image: ndy2/config-server:1.0
+    ports:
+      - "8888:8888"
+    environment:
+      spring.rabbitmq.host: rabbitmq
+      spring.profiles.active: default
+    networks:
+      my-network:
+
+  service-discovery:
+    container_name: service-discovery
+    image: ndy2/service-discovery:1.0
+    ports:
+      - "8761:8761"
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+    depends_on:
+      - config-server
+    networks:
+      my-network:
+
+  apigateway:
+    container_name: apigateway
+    image: ndy2/apigateway:1.0
+    ports:
+      - "8000:8000"
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.rabbitmq.host: rabbitmq
+      eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+    depends_on:
+      - service-discovery
+      - zipkin
+      - rabbitmq
+      - kafka
+    networks:
+      my-network:
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ecommerce
+      MYSQL_ROOT_PASSWORD: root1234
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      my-network:
+
+  user-service:
+    container_name: user-service
+    image: ndy2/user-service:1.0
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.rabbitmq.host: rabbitmq
+      spring.zipkin.base-url: http://zipkin:9411
+      eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+      logging.file: /api-logs/users-ws.log
+    depends_on:
+      - apigateway
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.12
+
+  order-service:
+    container_name: order-service
+    image: ndy2/order-service:1.0
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.rabbitmq.host: rabbitmq
+      spring.zipkin.base-url: http://zipkin:9411
+      eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+      spring.datasource.url: jdbc:mariadb://mariadb:3306/mydb
+      logging.file: /api-logs/orders-ws.log
+    depends_on:
+      - apigateway
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.13
+  
+  product-service:
+    container_name: product-service
+    image: ndy2/product-service:1.0
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.rabbitmq.host: rabbitmq
+      spring.zipkin.base-url: http://zipkin:9411
+      eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+      logging.file: /api-logs/products-ws.log
+    depends_on:
+      - apigateway
+    networks:
+      my-network:
+        ipv4_address: 172.18.0.14

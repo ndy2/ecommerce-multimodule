@@ -8,5 +8,5 @@ ENTRYPOINT [
 "java",
 "-Djava.security.egd=file:/dev/.urandom",
 "-jar",
-"users-service.jar"
+"UserService.jar"
 ]
