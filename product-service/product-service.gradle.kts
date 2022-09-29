@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-
+	implementation("mysql:mysql-connector-java:8.0.30")
 	implementation("org.springframework.kafka:spring-kafka:2.9.1")
 	implementation("org.springframework.cloud:spring-cloud-starter-config")
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
