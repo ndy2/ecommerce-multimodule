@@ -21,7 +21,7 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     networks:
-      my-network:
+      - my-network
 
   zookeeper:
     container_name: zookeeper
@@ -64,7 +64,7 @@ services:
       - zookeeper
       - mysql
     networks:
-      my-network:
+      - my-network
 
   service-discovery:
     container_name: service-discovery
@@ -76,7 +76,7 @@ services:
     depends_on:
       - config-server
     networks:
-      my-network:
+      - my-network
 
   apigateway:
     container_name: apigateway
@@ -90,7 +90,7 @@ services:
     depends_on:
       - service-discovery
     networks:
-      my-network:
+      - my-network
 
   mysql:
     container_name: mysql
@@ -104,7 +104,7 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     networks:
-      my-network:
+      - my-network
 
   zipkin:
     container_name: zipkin
@@ -112,7 +112,7 @@ services:
     ports:
       - "9411:9411"
     networks:
-      my-network:
+      - my-network
 
   user-service:
     container_name: user-service
@@ -122,6 +122,7 @@ services:
       spring.rabbitmq.host: rabbitmq
       spring.zipkin.base-url: http://zipkin:9411
       eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+      spring.datasource.url: jdbc:mysql://mysql:3306/mydb
       logging.file: /api-logs/users-ws.log
     depends_on:
       - apigateway
