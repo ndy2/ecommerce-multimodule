@@ -5,4 +5,8 @@ spring:
       name: ecommerce
       enabled: true
   profiles:
-    active: local, local-jwt, local-eureka, local-rabbitmq
+    active:
+    - local
+    - local-jwt
+    - local-eureka
+    - local-rabbitmq

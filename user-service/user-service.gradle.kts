@@ -9,7 +9,7 @@ plugins {
 dependencies {
     implementation(project(":util"))
 
-    implementation("org.mariadb.jdbc:mariadb-java-client")
+    implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
     implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
     implementation("org.springframework.cloud:spring-cloud-starter-config")
