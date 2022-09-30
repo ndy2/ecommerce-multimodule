@@ -44,6 +44,10 @@ subprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+        //config
+        implementation("org.springframework.cloud:spring-cloud-starter-config")
+        implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
+
         //logging
         implementation("io.github.microutils:kotlin-logging-jvm:2.0.10")
         implementation("org.slf4j:slf4j-api:1.7.30")
