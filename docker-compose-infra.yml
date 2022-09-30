@@ -49,6 +49,63 @@ services:
       my-network:
         ipv4_address: 172.18.0.101
 
+  config-server:
+    container_name: config-server
+    image: ndy2/config-server:1.0
+    ports:
+      - "8888:8888"
+    environment:
+      spring.rabbitmq.host: rabbitmq
+      spring.profiles.active: default
+    depends_on:
+      zipkin:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      kafka:
+        condition: service_started
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  service-discovery:
+    container_name: service-discovery
+    image: ndy2/service-discovery:1.0
+    ports:
+      - "8761:8761"
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.zipkin.base-url: http://zipkin:9411
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      - my-network
+
+  apigateway:
+    container_name: apigateway
+    image: ndy2/apigateway:1.0
+    ports:
+      - "8000:8000"
+    environment:
+      spring.cloud.config.uri: http://config-server:8888
+      spring.rabbitmq.host: rabbitmq
+      eureka.client.serviceUrl.defaultZone: http://service-discovery:8761/eureka/
+      spring.zipkin.base-url: http://zipkin:9411
+    depends_on:
+      service-discovery:
+        condition: service_started
+    networks:
+      - my-network
+
   db:
     container_name: db
     image: mysql:5.7

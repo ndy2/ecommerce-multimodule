@@ -5,4 +5,7 @@ spring:
       name: ecommerce
       enabled: true
   profiles:
-    active: local-product-service
+    active:
+      - actuator
+      - local-db
+      - local-eureka
