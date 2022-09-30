@@ -9,3 +9,4 @@ spring:
       - actuator
       - local-db
       - local-eureka
+      - local-kafka

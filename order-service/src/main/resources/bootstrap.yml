@@ -9,3 +9,4 @@ spring:
       - local-db
       - local-eureka
       - local-rabbitmq
+      - local-kafka

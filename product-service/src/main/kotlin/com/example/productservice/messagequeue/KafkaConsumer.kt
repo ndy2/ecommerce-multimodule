@@ -20,8 +20,7 @@ class KafkaConsumer(
     @Transactional
     @KafkaListener(topics = ["example-catalog-topic"], groupId = "consumerGroupId")
     fun updateQuantity(kafkaMessage: String) {
-        println("Kafka Message : -> ${kafkaMessage}")
-
+        println("Kafka Message : -> $kafkaMessage")
         var map: Map<Any, Any> = emptyMap()
 
         try {
