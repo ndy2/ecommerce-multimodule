@@ -5,14 +5,10 @@
 - [원본 깃헙 링크](https://github.com/joneconsulting/msa_with_spring_cloud)
 
 ### How to Run
-1. docker build all services
+1. clone this project
 ```
-docker build -t ndy2/user-service:1.0 user-service/.
-docker build -t ndy2/order-service:1.0 order-service/.
-docker build -t ndy2/product-service:1.0 product-service/.
-docker build -t ndy2/service-discovery:1.0 service-discovery/.
-docker build -t ndy2/apigateway:1.0 api-gateway/.
-docker build -t ndy2/config-server:1.0 config-server/.
+git clone https://github.com/ndy2/ecommerce-multimodule.git
+cd ecommerce-multimodule
 ```
 
 2. run apps
