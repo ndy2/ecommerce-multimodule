@@ -6,13 +6,13 @@ spring:
       enabled: true
   profiles:
     active:
-    - local
+    - actuator
     - local-rabbitmq
 
 encrypt:
   #  key: abcdefghijklmnopqrstuvwxzy0123456789
   key-store:
 #    location: file://${user.home}/Keys/spring-msa-lecture/ecommerce.jks
-    location: file:/ecommerce.jks
+    location: classpath:/ecommerce.jks
     password: 1q2w3e4r
     alias: ecommerce

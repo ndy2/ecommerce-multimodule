@@ -5,4 +5,4 @@ spring:
       name: ecommerce
       enabled: true
   profiles:
-    active: local, local-eureka
+    active: local-product-service

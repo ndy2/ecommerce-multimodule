@@ -4,3 +4,9 @@ server:
 spring:
   application:
     name: service-discovery
+
+## 자기 자신을 등록하지 않는다.
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

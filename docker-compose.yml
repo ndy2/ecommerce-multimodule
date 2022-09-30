@@ -58,15 +58,20 @@ services:
       spring.rabbitmq.host: rabbitmq
       spring.profiles.active: default
     depends_on:
-      - zipkin
-      - rabbitmq
-      - kafka
-      - zookeeper
-      - db
+      zipkin:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      kafka:
+        condition: service_started
     networks:
       - my-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -105,17 +110,19 @@ services:
     container_name: db
     image: mysql:5.7
     ports:
-      - "8080:3306"
+      - "3306:3306"
     environment:
-      MYSQL_DATABASE: mydb
-      MYSQL_ROOT_PASSWORD: deukyun
+      - MYSQL_DATABASE=mydb
+      - MYSQL_ROOT_PASSWORD=deukyun
+      - TZ=Asia/Seoul
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -uroot --password=$$MYSQL_ROOT_PASSWORD
     networks:
-      - my-network
+      my-network:
+        ipv4_address: 172.18.0.20
 
   zipkin:
     container_name: zipkin
