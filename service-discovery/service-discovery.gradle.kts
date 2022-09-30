@@ -1,7 +1,6 @@
 description = "service-discovery 전화번호부"
 
 plugins {
-    id("application")
 }
 
 dependencies {

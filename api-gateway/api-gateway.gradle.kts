@@ -1,7 +1,6 @@
 description = "api-gateway, 인증 필터 제공"
 
 plugins {
-    id("application")
 }
 
 dependencies {

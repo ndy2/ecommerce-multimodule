@@ -4,7 +4,6 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 description = "유틸"
 
 plugins {
-    id("application")
 }
 
 val jar: Jar by tasks

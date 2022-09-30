@@ -1,7 +1,6 @@
 description = "주문 서비스"
 
 plugins {
-    id("application")
     kotlin("plugin.jpa")
 }
 
