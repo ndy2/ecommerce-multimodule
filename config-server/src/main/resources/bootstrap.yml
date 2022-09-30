@@ -8,7 +8,6 @@ spring:
     active:
     - actuator
     - local-rabbitmq
-
 encrypt:
   key-store:
     location: classpath:/ecommerce.jks

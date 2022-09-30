@@ -12,4 +12,5 @@ spring:
           default-label: main
           try-master-branch: false
           uri: https://github.com/ndy2/ecommerce-config.git
+#          uri: file:///Users/deukyun/Desktop/study-with-code/study-spring-cloud/ecommerce/git-local-repo
 
