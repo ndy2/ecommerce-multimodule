@@ -25,6 +25,7 @@ http://localhost:8761
 ```
 
 ### 더 공부할것
+- 코틀린스러운 코드!
 - 테스트 컨테이너
   - https://www.testcontainers.org/
 - multi-module 에서 document 를 효율적으로 제공하는 방법 찾기
